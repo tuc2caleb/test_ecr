@@ -2,16 +2,16 @@ name: Deploy to ECR
 
 on: 
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-  
+
     name: Build Image
     runs-on: ubuntu-latest
 
     steps:
-    
+
     - name: Check out code
       uses: actions/checkout@v2
 
@@ -46,7 +46,7 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:my_app
 
- build_db:
+  build_db:
 
     name: Build DB Image
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Login to Amazon ECR
-      id: login-ecr
+      id: login-ecr-db
       uses: aws-actions/amazon-ecr-login@v1
       with:
         registry: 128140924817.dkr.ecr.us-east-1.amazonaws.com/clo835_ecr_repository
@@ -69,7 +69,7 @@ jobs:
    
     - name: Build, tag, and push image DB to Amazon ECR
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REGISTRY: ${{ steps.login-ecr-db.outputs.registry }}
         ECR_REPOSITORY: clo835_ecr_repository
         IMAGE_TAG: v0.1
       run: |
@@ -79,4 +79,4 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f Dockerfile_mysql .
         docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:my_db
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:my_db  
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:my_db
