@@ -3,7 +3,7 @@ name: Terraform Apply
 on:
   push:
     paths:
-      - 'terraform/**'  # Specify the path to your Terraform code
+      - 'terraform/dev/instances/**'  # Specify the path to your Terraform code
 
 jobs:
   terraform:
