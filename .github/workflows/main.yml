@@ -1,8 +1,11 @@
 name: Deploy to ECR
 
-on: 
+on:
   push:
-    branches: [main]
+    paths:
+      - 'docker_build/**'
+    branches:
+      - main
 
 jobs:
   build:
