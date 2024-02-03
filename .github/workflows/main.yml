@@ -9,14 +9,16 @@ on:
 
 jobs:
   build_app:
-
     name: App Build Deployment
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Check out code
       uses: actions/checkout@v2
+
+    - name: Set build number
+      id: set-build-number
+      run: echo "BUILD_NUMBER=$((BUILD_NUMBER + 1))" >> $GITHUB_ENV
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -28,35 +30,32 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
         AWS_REGION: us-east-1
+        BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
 
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: app-container-repo
-        IMAGE_TAG: v0.1
+        IMAGE_TAG: v0.${{ env.BUILD_NUMBER }}
       run: |
         cd docker_build/
         ls -ltra
         # Docker build
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        # Unit test
-        docker run -d -p 8080:8080 --name nodeapp $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker ps
-        echo "Pause for 10 seconds to let container start"
-        sleep 10
-       
+        # Unit test or other necessary steps
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        
 
   build_db:
-
     name: DB Build Deployment
     runs-on: ubuntu-latest
 
     steps:
-
     - name: Check out code
       uses: actions/checkout@v2
+
+    - name: Set build number
+      id: set-build-number-db
+      run: echo "BUILD_NUMBER_DB=$((BUILD_NUMBER_DB + 1))" >> $GITHUB_ENV
 
     - name: Login to Amazon ECR
       id: login-ecr-db
@@ -67,13 +66,14 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-        AWS_REGION: us-east-1   
-   
-    - name: Build, and push image DB to Amazon ECR
+        AWS_REGION: us-east-1
+        BUILD_NUMBER_DB: ${{ env.BUILD_NUMBER_DB }}
+
+    - name: Build and push image DB to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr-db.outputs.registry }}
         ECR_REPOSITORY: database-container-repo
-        IMAGE_TAG: v0.1
+        IMAGE_TAG: v0.${{ env.BUILD_NUMBER_DB }}
       run: |
         cd docker_build/
         ls -ltra
