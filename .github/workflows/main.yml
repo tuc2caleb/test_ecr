@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  build:
+  build_app:
 
     name: App Build Deployment
     runs-on: ubuntu-latest
@@ -39,7 +39,7 @@ jobs:
         ls -ltra
         # Docker build
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:my_app
+        docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:web_app
         # Unit test
         docker run -d -p 8080:8080 --name nodeapp $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker ps
@@ -47,11 +47,11 @@ jobs:
         sleep 10
        
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:my_app
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:web_app
 
   build_db:
 
-    name: Build DB Image
+    name: DB Build Deployment
     runs-on: ubuntu-latest
 
     steps:
