@@ -29,7 +29,8 @@ table = 'employee';
 color_codes = {
     "red": "#e74c3c",
     "green": "#16a085",
-    
+     "green": "#16a085", 
+    "green": "#16a085",
  
 
 }
