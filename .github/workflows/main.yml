@@ -19,6 +19,11 @@ jobs:
     - name: Set build number
       id: set-build-number
       run: echo "BUILD_NUMBER=$((BUILD_NUMBER + 1))" >> $GITHUB_ENV
+    - name: Persist build number
+      uses: actions/persist-to-env-file@v1
+      with:
+        env-key: BUILD_NUMBER
+        file-name: .env
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -56,6 +61,11 @@ jobs:
     - name: Set build number
       id: set-build-number-db
       run: echo "BUILD_NUMBER_DB=$((BUILD_NUMBER_DB + 1))" >> $GITHUB_ENV
+    - name: Persist build number DB
+      uses: actions/persist-to-env-file@v1
+      with:
+        env-key: BUILD_NUMBER_DB
+        file-name: .env_db
 
     - name: Login to Amazon ECR
       id: login-ecr-db
