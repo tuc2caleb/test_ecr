@@ -3,7 +3,10 @@ name: Terraform Apply
 on:
   push:
     paths:
-      - 'terraform/dev/instances/**'  # Adjust the path to match your Terraform configuration location
+      - 'terraform/dev/instances/**'
+
+    branches:
+      - main
 
 jobs:
   terraform:
@@ -13,7 +16,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        path: 'terraform'  # Adjust the path to match your Terraform configuration location
+        path: 'terraform'
 
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
